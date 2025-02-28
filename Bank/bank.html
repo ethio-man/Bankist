@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link href="bank.css" rel="stylesheet" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Online Bank</title>
+  </head>
+  <body>
+    <div class="header">
+      <div class="welcome">Welcome Dagm!</div>
+      <div class="enter">
+        <input type="text" placeholder="User" class="user" />
+        <input type="text" placeholder="PIN" class="pin" />
+        <button class="open">🔛</button>
+      </div>
+      <div class="logo">
+        <img src="aNON.png" width="120px" />
+      </div>
+    </div>
+    <div class="time">
+      <div>
+        <h2>Current Balance</h2>
+        <p>At <span>2/22/2025, 1:05</span></p>
+      </div>
+      <div class="balance">
+        <h1><span class="sum">35,000</span> $</h1>
+      </div>
+    </div>
+    <div class="lefts">
+      <div class="transaction">
+        <div class="record1 type1">
+          <div class="round withdrawal"><span class="order">2</span> WITHDRAWAL</div>
+          <div class="date">10/11/2024</div>
+          <div><strong class="amount">3000$</strong></div>
+        </div>
+        <div class="record1 type2"> 
+          <div class="deposite round"><span class="order2">1</span> DEPOSITE</div>
+          <div class="date">2/22/2025</div>
+          <div class="amount"><strong class='amount2'>2000$</strong></div>
+        </div>
+        </div>
+      </div>
+    </div>
+    <div class="summery">
+      <span>IN </span>
+      <span class="qor" style="color: rgb(23, 192, 23)"> <span class="credited">0 </span>$ </span><br>
+      <span class="out">OUT</span>
+      <span class="qor" style="color: red"><span class="debited">0 </span> $</span></br>
+      <span>INTEREST</span>
+      <span class="qor"  style="color: rgb(23, 192, 23)"><span class="interest">0 </span>$</span><br>
+      <span>Sort</span>
+      <button class="qor sort">⬇️</button>
+      
+    </div>
+    <div class="right">
+    <div class="transfer">
+      <div class='box'>
+        <h2>Transfor Money</h2>
+        <input type="text" id="trans-to" class="buttons">
+        <input type="number" id='trans-am' class="buttons" min='50'>
+        <button class='send'>➡️</button><br>
+        <pre><label for="trans-to" >  Transfer to</label> <label for="trans-am" >      Amount</label></pre>
+      </div>
+    </div>
+    <div class="loan">
+      <div class='box'>
+        <h2>Request Loan</h2>
+         <input type="number" id='trans-am2' class="buttons" min="50">
+        <button class='send2'>➡️</button><br>
+        <pre><label for="trans-am2">    Amount</label></pre>
+      </div>
+    </div>
+    <div class="close">
+      <div class='box'>
+        <h2>Close Account</h2>
+        <input type="text" id="owner" class="buttons" placeholder="User">
+        <input type="number" id='trans-am3' class="buttons" placeholder="PIN">
+        <button class='send3'>➡️</button><br>
+        <pre><label for="owner" >Confirm user</label> <label for="trans-am" >   Confirm PIN</label></pre>
+      </div>
+    </div>
+  </div>
+  <div class='overlay hidden'>
+    
+  </div>
+    <script src="bank.js"></script>
+  </body>
+</html>
