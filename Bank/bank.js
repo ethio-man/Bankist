@@ -1,14 +1,13 @@
 "use strict";
 let balance = 35000;
-let IN = 0,
-  out = 0,
-  interest = 0;
 let index = 10;
-const overlay = document.querySelector(".overlay");
+const main = document.querySelector("main");
+
 const open = document.querySelector(".open");
 const pin = document.querySelector(".pin");
 const user = document.querySelector(".user");
 const transfer = document.querySelector("#trans-am");
+const reciever = document.querySelector("#trans-to");
 const send = document.querySelector(".send");
 const loan = document.querySelector("#trans-am2");
 const recieve = document.querySelector(".send2");
@@ -17,88 +16,130 @@ const credites = document.querySelector(".credited");
 const debit = document.querySelector(".debited");
 const interest_rev = document.querySelector(".interest");
 const owner = document.querySelector("#owner");
-const password = document.querySelector("#trans-am3");
+const passwords = document.querySelector("#trans-am3");
 const close = document.querySelector(".send3");
 const record1 = document.querySelector(".type1");
 const record2 = document.querySelector(".type2");
 const transaction = document.querySelector(".transaction");
-
+const sort = document.querySelector(".sort");
 const account1 = {
   owner: "Dagmawi Antehun",
   pin: 2017,
   movements: [2000, -400, 6000, -3000, -500, 600, 9000],
-  interestRate: 1.3,
+  interestRate: 0.03,
 };
 const account2 = {
   owner: "Siyum Teshome",
   pin: 2016,
   movements: [4000, -900, 1000, -2000, -700, 600, 1500],
-  interestRate: 0.9,
+  interestRate: 0.022,
 };
 const account3 = {
   owner: "Meron Esayas",
   pin: 2015,
-  movements: [-1000, 600, 3000, -3000, -500, 600, -4000],
-  interestRate: 1.6,
+  movements: [-1000, 600, 3000, -3000, 15000, 600, -4000],
+  interestRate: 0.01,
 };
 const account4 = {
   owner: "Fikir Antehun",
   pin: 2002,
   movements: [9000, -200, 16000, -7000, -2500, 6000, 15000],
-  interestRate: 1.4,
+  interestRate: 0.05,
 };
 const accounts = [account1, account2, account3, account4];
+//creating a username and total balance for each account
 accounts.forEach((acc) => {
-  acc.userName = acc.owner.split(" ");
+  acc.userName = acc.owner
+    .split(" ")
+    .map((acct) => acct.slice(0, 1))
+    .join("");
 });
-//****** */
-overlay.classList.remove("overlay");
+let currentAccount;
 const start = function () {
   const username = user.value;
-  const password = pin.value;
-  const currentAccount = accounts.find((acco) => acco.userName === username);
-  console.log(currentAccount);
-  if (username === "dagm" && password === "2017") {
-    //i made a temporary adjustment in this line ,line 8 (the overlay statement ) should be here
-  }
+  const password = Number(pin.value);
+  currentAccount = accounts.find(
+    (acco) => acco.userName === username && password === acco.pin
+  );
+  currentAccount
+    ? (main.style.opacity = 100)
+    : alert("Wrong username or password");
+  user.value = pin.value = "";
+  movement(currentAccount);
+};
+const movement = (account, sort = false) => {
+  transaction.innerHTML = "";
+
+  const move = sort
+    ? account.movements.slice().sort((a, b) => a - b)
+    : account.movements;
+
+  account.balance = move.reduce((accum, value) => accum + value);
+  total.textContent = account.balance;
+  move.forEach((mov, i) => {
+    const type = mov > 0 ? "type2" : "type1";
+    const types = mov > 0 ? "deposite" : "withdrawal";
+    const html = `<div class="record1 type1">
+          <div class="round ${types}"><span class="order">${
+      i + 1
+    }</span> ${types.toUpperCase()}</div>
+          <div class="date">10/11/2024</div>
+          <div><strong class="amount">${Math.abs(mov)}$</strong></div>
+        </div>`;
+    transaction.insertAdjacentHTML("afterbegin", html);
+    const IN = currentAccount.movements
+      .filter((acc) => acc > 0)
+      .reduce((acc, value) => acc + value, 0);
+    const out = -currentAccount.movements
+      .filter((acc) => acc < 0)
+      .reduce((acc, value) => acc + value, 0);
+    credites.textContent = IN;
+    debit.textContent = out;
+    interest_rev.textContent = account.balance * account.interestRate;
+  });
 };
 const trans_money = function () {
-  const amount = transfer.value;
-  out += Number(amount);
-  balance -= amount;
-  total.textContent = balance;
-  debit.textContent = out;
-  const child = record1.cloneNode(true);
-  transaction.prepend(child);
-  const tran_typ = document.querySelector(".order");
-  const tran_am = document.querySelector(".amount");
-  tran_typ.textContent = index;
-  tran_am.textContent = amount + "$";
-  index += 1;
+  const recieverAccount = accounts.find(
+    (acc) => acc.userName === reciever.value && reciever.value !== user.value
+  );
+  recieverAccount.movements.push(Number(transfer.value));
+  currentAccount.movements.push(-Number(transfer.value));
+  movement(currentAccount);
 };
 const recieve_loan = function () {
-  const amount = loan.value;
-  IN += Number(amount);
-  balance += Number(amount);
-  total.textContent = balance;
-  credites.textContent = IN;
-  const child = record2.cloneNode(true);
-  transaction.prepend(child);
-  const lon_ord = document.querySelector(".order2");
-  const lon_am = document.querySelector(".amount2");
-  lon_ord.textContent = index;
-  lon_am.textContent = amount + "$";
+  if (
+    currentAccount.movements.some((move) => move >= Number(loan.value) * 0.1)
+  ) {
+    currentAccount.movements.push(Number(loan.value));
+    movement(currentAccount);
+  }
 };
-const finish = () => {
-  if (owner.value === "dagm" && password.value === "2017") {
-    overlay.classList.add("overlay");
+const remove = () => {
+  if (
+    owner.value === currentAccount.userName &&
+    Number(passwords.value) === currentAccount.pin
+  ) {
+    const index = accounts.findIndex(
+      (acc) => acc.userName === currentAccount.userName
+    );
+
+    accounts.splice(index, 1);
+    main.style.opacity = 0;
+    owner.value = passwords.value = "";
   }
 };
 open.addEventListener("click", start);
 send.addEventListener("click", trans_money);
 recieve.addEventListener("click", recieve_loan);
-close.addEventListener("click", finish);
+close.addEventListener("click", remove);
+let sorted = false;
+sort.addEventListener("click", function () {
+  movement(currentAccount, !sorted);
+  sorted = !sorted;
+});
 const inter_rev = document.querySelector(".interest");
 interest = balance * 0.07;
 inter_rev.textContent = Math.trunc(interest);
-console.log(account1);
+
+console.log(accounts);
+console.log(account4);
